@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "fluidPage(\n  # Application title\n  titlePanel(\"Analysis of documents\"),\n\n  sidebarLayout(\n    # Sidebar with a slider and selection inputs\n    sidebarPanel(\n      selectInput(\"selection\", \"Choose a book:\",\n                  choices = books),\n      actionButton(\"update\", \"Change\"),\n      hr(),\n      sliderInput(\"freq\",\n                  \"Minimum Frequency:\",\n                  min = 1,  max = 50, value = 15),\n      sliderInput(\"max\",\n                  \"Maximum Number of Words:\",\n                  min = 1,  max = 300,  value = 100)\n    ),\n\n    # Show Word Cloud\n    mainPanel(\n      tabsetPanel(\n        tabPanel(\"Word Cloud\", plotOutput(\"plot\")),\n        tabPanel(\"Frequency Words\", plotOutput(\"plot2\")),\n        tabPanel(\"tf\", plotOutput(\"plottf\")), #analiza taksonomiczna\n        tabPanel(\"tf-idf\", plotOutput(\"plotidf\")), #ważone częstości logarytmiczne\n        tabPanel(\"LSA\", plotOutput(\"plotLSA\")), #LSA analiza ukrytych składowych sematycznych\n        tabPanel(\"tf contra LSA\", plotOutput(\"plottfLSA\")), #tf kontra LSA \n        tabPanel(\"LDA\", plotOutput(\"plotLDA\")) #LDA\n      )\n      \n    )\n    \n    \n    \n  )\n)\n",
+    "created" : 1493068646492.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1503125041",
+    "id" : "E0F4098D",
+    "lastKnownWriteTime" : 1498422592,
+    "last_content_update" : 1498422592348,
+    "path" : "D:/LULA/program/082-word-cloud/ui.R",
+    "project_path" : "ui.R",
+    "properties" : {
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

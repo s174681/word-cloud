@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "library(tm)\nlibrary(wordcloud)\nlibrary(memoise)\nlibrary(data.table)\nlibrary(RColorBrewer)\nlibrary(SnowballC)\nlibrary(ggplot2)\nlibrary(lsa)\n#library(topicmodels)\n#library(devtools)\n#unload(inst(\"topicmodels\"))\n#library(dendextend)\n\n# The list of valid books\nbooks <<- list(\"PlikM\" = \"M\",\n               \"PlikN\" = \"N\",\n               \"PlikO\" = \"O\")\n\n# Using \"memoise\" to automatically cache the results\ngetTermMatrix <- memoise(function(book) {\n  # Careful not to let just any name slip in here; a\n  # malicious user could manipulate this value.\n  if (!(book %in% books))\n    stop(\"Unknown book\")\n  \n  text <- readLines(sprintf(\"./%s.txt.gz\", book),encoding=\"UTF-8\")\n  \n  myCorpus = Corpus(VectorSource(text))\n  myCorpus = tm_map(myCorpus, tolower)\n  myCorpus = tm_map(myCorpus, removePunctuation)\n  myCorpus = tm_map(myCorpus, removeNumbers)\n  myCorpus = tm_map(myCorpus, PlainTextDocument)\n  #myCorpus = tm_map(myCorpus, removeWords, c(stopwords(\"SMART\"), \"ach\", \"aj\", \"albo\"))\n  stopwords <- readLines(sprintf(\"./stoplista_PL.txt.gz\"),encoding = \"UTF-8\")\n  myCorpus = tm_map(myCorpus,removeWords,stopwords)\n  myCorpus = tm_map(myCorpus,stripWhitespace)\n  \n  #----------LEMMATIZATION \"naiwna\" PL\n  lemma <- readLines(sprintf(\"./shortlemmatization.txt.gz\"), encoding=\"UTF-8\")\n  lemma <- tolower(lemma)\n  lemmat <- data.table(\n    lemmats = as.character(lapply(strsplit(as.character(lemma), split=\"\\t\"), \"[\", 1)),\n    tolemmat = as.character(lapply(strsplit(as.character(lemma), split=\"\\t\"), \"[\", 2))\n  )\n  \n  for(i in 1:760) \n  {\n    myCorpus <- tm_map(myCorpus, (gsub),\n                       pattern = paste(\"\", lemmat$tolemmat[i],\"\"),\n                       replacement = paste(\"\", lemmat$lemmats[i],\"\")\n    )\n  }\n  \n  #writeLines(as.character(myCorpus[[3]]))\n  #TDM which reflects the number of times each word in the corpus is found in each of the documents\n  myTDM = TermDocumentMatrix(myCorpus,\n                             control = list(minWordLength = 1))\n  \n  m = as.matrix(myTDM)\n  \n  sort(rowSums(m), decreasing = TRUE)\n})\n\ngetDocumentsMatrix <- function() {\n\n  katalog<-\"./Aforyzmy/\"    #textmining_1\" #forma podstawowa\n  docsCorpus<-VCorpus(DirSource(katalog,encoding = \"UTF-8\"),readerControl = list(reader=readPlain))\n  \n  \n  #docsCorpus = Corpus(VectorSource(text))\n  docsCorpus = tm_map(docsCorpus, tolower)\n  docsCorpus = tm_map(docsCorpus, removePunctuation)\n  docsCorpus = tm_map(docsCorpus, removeNumbers)\n  docsCorpus = tm_map(docsCorpus, PlainTextDocument)\n  #myCorpus = tm_map(docsCorpus, removeWords, c(stopwords(\"SMART\"), \"ach\", \"aj\", \"albo\"))\n  stopwords <- readLines(sprintf(\"./stoplista_PL.txt.gz\"),encoding = \"UTF-8\")\n  docsCorpus = tm_map(docsCorpus,removeWords,stopwords)\n  docsCorpus = tm_map(docsCorpus,stripWhitespace)\n  \n  #----------LEMMATIZATION \"naiwna\" PL\n  lemma <- readLines(sprintf(\"./shortlemmatization.txt.gz\"), encoding=\"UTF-8\")\n  lemma <- tolower(lemma)\n  lemmat <- data.table(\n    lemmats = as.character(lapply(strsplit(as.character(lemma), split=\"\\t\"), \"[\", 1)),\n    tolemmat = as.character(lapply(strsplit(as.character(lemma), split=\"\\t\"), \"[\", 2))\n  )\n  \n  for(i in 1:760) \n  {\n    docsCorpus <- tm_map(docsCorpus, (gsub),\n                         pattern = paste(\"\", lemmat$tolemmat[i],\"\"),\n                         replacement = paste(\"\", lemmat$lemmats[i],\"\")\n    )\n  }\n  \n  \n  return(docsCorpus)\n}\n\n\n",
+    "created" : 1498482862893.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1797149140",
+    "id" : "45EEC1AA",
+    "lastKnownWriteTime" : 1498485284,
+    "last_content_update" : -2147483648,
+    "path" : "E:/082-word-cloud/global.R",
+    "project_path" : "global.R",
+    "properties" : {
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

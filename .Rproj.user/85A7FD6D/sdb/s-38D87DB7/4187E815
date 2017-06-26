@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "remove.packages(tm)\ninstall.packages(\"http://cran.r-project.org/bin/windows/contrib/3.0/tm_0.5-10.zip\",repos=NULL) \nlibrary(\"tm\")\ninstall.packages(\"tm\")\ninstall.packages(\"tmap\")\ninstall.packages(\"SnowballC\")\ninstall.packages(\"ggplot2\")\ninstall.packages(\"wordcloud\")\ninstall.packages(\"NLP\")\ninstall.packages(\"memoise\")\ninstall.packages(\"RColorBrewer\")\ninstall.packages(\"data.table\")\ninstall.packages(\"data.table\", repos = \"https://Rdatatable.github.io/data.table\", type = \"source\")\nlibrary(\"data.table\")\n#remove.packages(data.table)\n\n\nkatalog<-\"D:/LULA/program/Aforyzmy/\"    #textmining_1\" #forma podstawowa\nkorpus<-VCorpus(DirSource(katalog,encoding = \"UTF-8\"),readerControl = list(reader=readPlain))\n#docs <- Corpus(VectorSource(text))\nkorpus<-tm_map(korpus,removeNumbers)\n#korpus<-tm_map(korpus,content_transformer(tolower))\nkorpus<-tm_map(korpus,tolower)\nkorpus<-tm_map(korpus,removePunctuation)\nkorpus<-tm_map(korpus,stripWhitespace)\nkorpus <- tm_map(korpus, PlainTextDocument)\nstoplista<-readLines(\"D:/LULA/program/stoplista_PL.txt\",encoding = \"UTF-8\")\n#korpus <- tm_map(korpus, removeWords, stopwords(“english”))\nkorpus<-tm_map(korpus,removeWords,stoplista)\nkorpus<-tm_map(korpus,stripWhitespace)\n#documentwriteLines(as.character(korpus[[3]]))\n\n#----------LEMMATIZATION \"naiwna\" PL\nlemma <- readLines(\"D:/LULA/program/lemmatization-pl.txt\", encoding=\"UTF-8\")\nlemma <- tolower(lemma)\nlemmat <- data.table(\n  lemmats = as.character(lapply(strsplit(as.character(lemma), split=\"\\t\"), \"[\", 1)),\n  tolemmat = as.character(lapply(strsplit(as.character(lemma), split=\"\\t\"), \"[\", 2))\n)\nfor(i in 1:3296232)\nfor(i in 1580000:1590000) \n  {\n  korpus <- tm_map(korpus, (gsub),\n                 pattern = paste(\"\", lemmat$tolemmat[i],\"\"),\n                 replacement = paste(\"\", lemmat$lemmats[i],\"\")\n  )\n}\n\nkorpus <- tm_map(korpus, (gsub),\n                 pattern = \"złotem\",\n                 replacement = \"złoto\")\n\n#korpus = tm_map(korpus, stemDocument)\nwriteLines(as.character(korpus[[15]]))\n\n\ndtm<-DocumentTermMatrix(korpus)\ndtm\ntdm<-TermDocumentMatrix(korpus)\ntdm\nm<-as.matrix(dtm)\ndim(m)\nwrite.csv(m, file=\"dtm.csv\")\n#----------tf analiza taksonomiczna\n#dtm<-DocumentTermMatrix(korpus, control = list(bounds = list(global = c(2,6))))\n#dtm\nd<-dist(dtm,method=\"euclidean\")\nfit1<-hclust(d=d, method = \"ward.D\")\nplot(fit1)\n#----------tf-idf(ważone częstości logarytmiczne)\ndtm<-DocumentTermMatrix(korpus, control = list(weighting=weightTfIdf,bounds = list(global = c(2,6))))\ndtm\nd<-dist(dtm,method=\"euclidean\")\nfit2<-hclust(d=d, method = \"ward.D\")\nplot(fit2)\n",
+    "created" : 1498480627681.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1566550100",
+    "id" : "4187E815",
+    "lastKnownWriteTime" : 1498423298,
+    "last_content_update" : 1498480641560,
+    "path" : "D:/LULA/program/PrzeksztalceniaWORDS.R",
+    "project_path" : null,
+    "properties" : {
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
